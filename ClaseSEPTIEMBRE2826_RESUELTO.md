@@ -216,9 +216,11 @@ Es un **exonúcleo**. El kernel casi no abstrae el hardware y solo reparte recur
 
 ## 4. Evidencias reales
 
+**Entorno de trabajo:** todas las pruebas las hice en mi computador con **Windows 11**. Para la parte de Linux usé **Ubuntu 26.04 LTS sobre WSL2**, y para la parte de FreeBSD usé una **máquina virtual de FreeBSD 15.1 en VirtualBox**. Las imágenes de esta sección son capturas de las salidas reales de la terminal de esos dos entornos. Mac OS X aparece en este documento solo como ejemplo teórico de kernel híbrido (sección 3) y no participó en ninguna prueba.
+
 ### 4.1 Ubuntu 26.04 (WSL2): compilación del kernel 6.18.54
 
-Lo hice en mi Ubuntu 26.04 LTS sobre WSL2, con 12 núcleos y 8 GB de RAM. Descargué el código fuente de kernel.org, partí de la configuración del kernel que estaba en uso (`/proc/config.gz`, el equivalente a copiar `/boot/config-$(uname -r)`) y compilé la imagen y los módulos.
+Lo hice en Ubuntu 26.04 LTS ejecutándose sobre WSL2 dentro de mi Windows 11, con 12 núcleos y 8 GB de RAM disponibles. Descargué el código fuente de kernel.org, partí de la configuración del kernel que estaba en uso (`/proc/config.gz`, el equivalente a copiar `/boot/config-$(uname -r)`) y compilé la imagen y los módulos.
 
 **Kernel antes de empezar y descarga del código fuente:**
 
@@ -280,7 +282,7 @@ Del resultado saco tres cosas:
 
 ### 4.2 FreeBSD 15.1: kernel personalizado CLASEKERN
 
-Usé la máquina virtual de FreeBSD 15.1-RELEASE (amd64) en VirtualBox, con 6 CPU y 4 GB de RAM. Ampliué el disco a 30 GB porque el original de 6 GB no alcanzaba para el código fuente y la compilación, y descargué las fuentes (`src.txz`, 241 MB) con `fetch` desde download.freebsd.org. Como el sistema es de 64 bits, la ruta de configuración es `amd64` y no `i386`.
+Usé la máquina virtual de FreeBSD 15.1-RELEASE (amd64) que corre en VirtualBox sobre mi Windows 11, con 6 CPU y 4 GB de RAM, y trabajé con ella por SSH desde Windows. Ampliué el disco a 30 GB porque el original de 6 GB no alcanzaba para el código fuente y la compilación, y descargué las fuentes (`src.txz`, 241 MB) con `fetch` desde download.freebsd.org. Como el sistema es de 64 bits, la ruta de configuración es `amd64` y no `i386`.
 
 **Identificar el sistema:**
 
