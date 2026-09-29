@@ -1,0 +1,379 @@
+﻿TALLER SCRIPTING CON LA SHELL DE BASH
+
+Nombre Completo: 
+Correo electrónico: 
+Codigo: 
+La idea con este taller es que se familiaricen con la SHELL de Bash en lo que corresponde a Shellscriptg. Al igual como podrán apreciar en los últimos ejercicios hay una serie de guiones de Shell encaminados a utilizarlos como herramientas de ayuda para gestión de procesos o actividades propias del sistema operativo. 
+En resultado deberán describir lo que hace el script, a diferencia del último que genera un archivo el cual ustedes me lo enviaran adjunto a este taller resuelto.  Les comparto un ejemplo del archivo que saque de mi máquina.
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+# Declaration of variables
+name=Tom
+age=12
+# Displaying variables
+echo $name $age
+////////////////////////////////////////////////////////////////////////////////////////////////////Re
+Resultado:
+
+
+
+********************************************************************************
+Example 2: Read, Store and Display User Input using Bash Script
+#!/bin/bash
+echo "Enter a number:"
+read num
+echo "The number is: $num"
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+# Declaration of variables
+name='My name is Tom.'
+age='My age is 12.'
+# Concatenation
+info="${name} ${age}"
+echo "Result: $info"
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+num1=10
+num2=20
+sum=$(($num1+$num2))
+echo "The Sum is: $sum"
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+num1=30
+num2=20
+dif=$(($num1-$num2))
+echo "The difference is: $dif"
+/////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+echo $((1 + RANDOM % 50))
+/////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number:" num1
+read -p "Enter a smaller number:" num2
+echo "Addition: $(($num1 + $num2))"
+echo "Subtraction: $(($num1 - $num2))"
+echo "Multiplication: $(($num1 * $num2))"
+echo "Division: $(($num1 / $num2))"
+/////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number:" num
+if [ $((num%2)) == 0 ]
+then
+  echo "The number is even"
+else
+  echo "The number is odd"
+fi
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+for (( i=1; i<=10; i++ ))
+do
+  if [ $((i%2)) == 0 ]
+  then
+    echo $i
+  fi
+done
+/////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number: " num
+for (( i=1; i<=10; i++ ))
+do
+  echo "$num x $i = $((num*i))"
+done
+/////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number: " num
+sum=0
+while [ $num -gt 0 ]
+do
+  dig=$((num%10))
+  sum=$((sum+dig))
+  num=$((num/10))
+done
+echo "The sum of digits of the given number: $sum"
+
+//////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number: " num
+temp=1
+for (( i=1; i<=$num; i++ ))
+do
+  temp=$((temp*i))
+done
+echo "The factorial of $num is: $temp"
+////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a number: " num
+sum=0
+for (( i=1; i<=$num; i++ ))
+do
+  sum=$((sum + i))
+done
+echo "Sum of first $num numbers: $sum"
+//////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+arr=(24 27 84 11 99)
+echo "Given array: ${arr[*]}"
+s=100000
+l=0
+for num in "${arr[@]}"
+do
+  if [ $num -lt $s ]
+  then
+    s=$num
+  fi
+  if [ $num -gt $l ]
+  then
+    l=$num
+  fi
+done
+echo "The smallest element: $s"
+echo "The largest: $l"
+//////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+echo "Enter an array of numbers (separated by space):"
+read -a arr
+sum=0
+for i in "${arr[@]}"
+do
+  sum=$((sum+i))
+done
+avg=$((sum/${#arr[@]}))
+echo "Average of the array elements: $avg"
+/////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter the file name: " file
+read -p "Enter destination path:" dest
+if [ -e "$file" ]; then
+        cp $file $dest
+        file_location=$(readlink -f $dest)
+        echo "A copy of $file is now located att: $file_location"
+    else
+        echo "Error: $file does not exist"
+fi
+//////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter remote host IP address:" ip
+ping -c 1 $ip
+if [ $? -eq 0 ]
+then
+  echo "-----------------------"
+  echo "Host is up!"
+  echo "-----------------------"
+else
+  echo "-----------------------"
+  echo "Host is down!"
+  echo "-----------------------"
+fi
+/////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter host address:" HOST
+read -p "Enter port number:" PORT
+nc -z -v -w5 "$HOST" "$PORT"
+if [ $? -eq 0 ]; then
+  echo "----------------------------------------------"
+  echo "Port $PORT on $HOST is open"
+  echo "----------------------------------------------"
+else
+  echo "----------------------------------------------"
+  echo "Port $PORT on $HOST is closed"
+  echo "----------------------------------------------"
+fi
+////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter a host address:" HOST
+if ping -q -c 1 -W 1 $HOST >/dev/null; then
+  echo "----------------------------------------------"
+  echo "Internet connection is up"
+  echo "----------------------------------------------"
+else
+  echo "----------------------------------------------"
+  echo "Internet connection is down"
+  echo "----------------------------------------------"
+fi
+//////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+read -p "Enter process name: " process
+if pgrep $process > /dev/null
+then
+    echo "Process is running."
+else
+    echo "Process is not running."
+Fi
+////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+echo "The current top 10 CPU-consuming processes: "
+ps -eo pid,%cpu,args | sort -k 2 -r | head -n 11
+////////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+echo "The current top 10 Memory-consuming processes: "
+ps -eo pid,%mem,args | sort -k 2 -r | head -n 11
+///////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+users=$(who | wc -l)
+echo "Number of currently logged-in users: $users"
+//////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+os_name=$(uname -s)
+os_release=$(uname -r)
+os_version=$(cat /etc/*-release | grep VERSION_ID | cut -d '"' -f 2)
+os_arch=$(uname -m)
+echo "OS Name: $os_name"
+echo "OS Release: $os_release"
+echo "OS Version: $os_version"
+echo "OS Architecture: $os_arch"
+/////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+mem=$(free -m | awk 'NR==2{printf "%.2f%%", $3*100/$2}')
+echo "Current Memory Usage: $mem"
+/////////////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+# read-menu: a menu driven system information program
+clear
+cat << EOF
+Please Select:
+
+    1. Display System Information
+    2. Display Disk Space
+    3. Display Home Space Utilization
+    0. Quit
+
+EOF
+echo -n 'Enter selection [0-3]: '
+read -r sel
+
+case $sel in
+	0) echo "Program terminated.";;
+	1) echo "Hostname: $HOSTNAME"; uptime;;
+	2) df -h;;
+	3)
+		if [ "$UID" = 0 ]; then
+			echo "Home Space Utilization (All Users)"
+			du -sh /home/*
+		else
+			echo "Home Space Utilization ($USER)"
+			du -sh "$HOME"
+		fi
+	;;
+	*)
+		echo "Invalid entry." >&2
+		exit 1
+esac
+///////////////////////////////////////////////////////////////////////////////////////
+#!/bin/bash
+
+IP4FW=/sbin/iptables
+IP6FW=/sbin/ip6tables
+LSPCI=/usr/bin/lspci
+ROUTE=/sbin/route
+NETSTAT=/bin/netstat
+LSB=/usr/bin/lsb_release
+
+## files ##
+DNSCLIENT="/etc/resolv.conf"
+DRVCONF="/etc/modprobe.conf"
+NETALIASCFC="/etc/sysconfig/network-scripts/ifcfg-eth?-range?"
+NETCFC="/etc/sysconfig/network-scripts/ifcfg-eth?"
+NETSTATICROUTECFC="/etc/sysconfig/network-scripts/route-eth?"
+SYSCTL="/etc/sysctl.conf"
+
+## Output file ##
+OUTPUT="network.$(date +'%d-%m-%y').info.txt"
+
+## Email info to?? ##
+SUPPORT_ID="your_name@service_provider.com"
+
+chk_root() {
+	local meid=$(id -u)
+	if [ $meid -ne 0 ]; then
+		echo "You must be root user to run this tool"
+		exit 999
+	fi 
+}
+
+write_header() {
+	echo "---------------------------------------------------" >>$OUTPUT
+	echo "$@" >>$OUTPUT
+	echo "---------------------------------------------------" >>$OUTPUT
+}
+
+dump_info() {
+	echo "* Hostname: $(hostname)" >$OUTPUT
+	echo "* Run date and time: $(date)" >>$OUTPUT
+
+	write_header "Linux Distro"
+	echo "Linux kernel: $(uname -mrs)" >>$OUTPUT
+	$LSB -a >>$OUTPUT
+
+	[ -x ${HWINF} ] && write_header "${HWINF}"
+	[ -x ${HWINF} ] && ${HWINF} >>$OUTPUT
+
+	[ -x ${HWINF} ] && write_header "${HWINF}"
+	[ -x ${HWINF} ] && ${HWINF} >>$OUTPUT
+
+	write_header "PCI Devices"
+	${LSPCI} -v >>$OUTPUT
+
+	write_header "$IFCFG Output"
+	$IFCFG >>$OUTPUT
+
+	write_header "Kernel Routing Table"
+	$ROUTE -n >>$OUTPUT
+
+	write_header "Network Card Drivers Configuration $DRVCONF"
+	[ -f $DRVCONF ] && grep eth $DRVCONF >>$OUTPUT || echo "Error $DRVCONF file not found." >>$OUTPUT
+
+	write_header "DNS Client $DNSCLIENT Configuration"
+	[ -f $DNSCLIENT ] && cat $DNSCLIENT >>$OUTPUT || echo "Error $DNSCLIENT file not found." >>$OUTPUT
+
+	write_header "Network Configuration File"
+	for f in $NETCFC; do
+		if [ -f $f ]; then
+			echo "** $f **" >>$OUTPUT
+			cat $f >>$OUTPUT
+		else
+			echo "Error $f not found." >>$OUTPUT
+		fi
+	done
+
+	write_header "Network Aliase File"
+	for f in $NETALIASCFC; do
+		if [ -f $f ]; then
+			echo "** $f **" >>$OUTPUT
+			cat $f >>$OUTPUT
+		else
+			echo "Error $f not found." >>$OUTPUT
+		fi
+	done
+
+	write_header "Network Static Routing Configuration"
+	for f in $NETSTATICROUTECFC; do
+		if [ -f $f ]; then
+			echo "** $f **" >>$OUTPUT
+			cat $f >>$OUTPUT
+		else
+			echo "Error $f not found." >>$OUTPUT
+		fi
+	done
+
+	write_header "IP4 Firewall Configuration"
+	$IP4FW -L -n >>$OUTPUT
+
+	write_header "IP6 Firewall Configuration"
+	$IP6FW -L -n >>$OUTPUT
+
+	write_header "Network Stats"
+	$NETSTAT -s >>$OUTPUT
+
+	write_header "Network Tweaks via $SYSCTL"
+	[ -f $SYSCTL ] && cat $SYSCTL >>$OUTPUT || echo "Error $SYSCTL not found." >>$OUTPUT
+
+	echo "The Network Configuration Info Written To $OUTPUT. Please email this file to $SUPPORT_ID."
+}
+
+chk_root
+dump_info
+
