@@ -178,7 +178,6 @@ SISTEMAS OPERATIVOSD/
     fill_xlsx.py                        <- script que escribio la tabla del Excel
     build_taller_docx.js                <- script que genero el docx resuelto
     sesion_2026-08-19.md                <- bitacora de la preparacion del entorno (VMs, software)
-    graphify-out/                       <- grafo de conocimiento de la sesion (graph.html, GRAPH_REPORT.md)
 ```
 
 Los scripts (`.sh`, `.py`, `.js`) se dejaron en la carpeta para que puedas
