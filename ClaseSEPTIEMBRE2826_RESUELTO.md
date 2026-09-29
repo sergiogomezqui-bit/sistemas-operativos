@@ -204,6 +204,70 @@ Es un **exonúcleo**. El kernel casi no abstrae el hardware y solo reparte recur
 
 ---
 
-## 4. Lo que aprendí
+## 4. Evidencias reales
+
+### 4.1 Ubuntu 26.04 (WSL2): compilación del kernel 6.18.54
+
+Lo hice en mi Ubuntu 26.04 LTS sobre WSL2, con 12 núcleos y 8 GB de RAM. Descargué el código fuente de kernel.org, partí de la configuración del kernel que estaba en uso (`/proc/config.gz`, el equivalente a copiar `/boot/config-$(uname -r)`) y compilé la imagen y los módulos.
+
+**Kernel antes de empezar y descarga del código fuente:**
+
+```
+$ uname -r
+6.18.33.2-microsoft-standard-WSL2
+
+$ wget linux-6.18.54.tar.xz
+2026-09-28 22:30:48 URL:https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.54.tar.xz [154801608/154801608]
+-rw-r--r-- 1 sergio_gomez sergio_gomez 148M Sep 25 09:47 linux-6.18.54.tar.xz
+```
+
+**Configuración (`make olddefconfig`):**
+
+```
+#
+# configuration written to .config
+#
+```
+
+**Compilación (`make -j12 bzImage modules`):** terminó sin errores.
+
+```
+real    30m50.256s
+user    293m32.196s
+sys     54m55.183s
+```
+
+**Resultado:**
+
+```
+$ make kernelrelease
+6.18.54-microsoft-standard-WSL2
+
+$ ls -lh arch/x86/boot/bzImage
+-rw-r--r-- 1 sergio_gomez sergio_gomez 15M Sep 28 23:01 arch/x86/boot/bzImage
+
+$ file arch/x86/boot/bzImage
+arch/x86/boot/bzImage: Linux kernel x86 boot executable, bzImage, version 6.18.54-microsoft-standard-WSL2 (sergio_gomez@DESKTOP-8T2JB98) #1 SMP PREEMPT_DYNAMIC Mon Sep 28 22:59:50 -05 2026
+
+$ find . -name "*.ko" | wc -l
+960
+
+$ make modules_install INSTALL_MOD_PATH=~/kernel/rootfs
+rc=0
+6.18.54-microsoft-standard-WSL2
+
+$ modinfo .../kernel/net/nsh/nsh.ko
+license:        GPL v2
+description:    NSH protocol
+author:         Jiri Benc <jbenc@redhat.com>
+intree:         Y
+```
+
+Del resultado saco tres cosas:
+- El kernel nuevo (6.18.54) es un parche más nuevo del que estaba corriendo (6.18.33.2).
+- La imagen `bzImage` pesa 15 MB, y los componentes que no van dentro se compilaron como 960 módulos `.ko`, tal como explica la diapositiva 34.
+- WSL2 arranca el kernel desde Windows y no desde GRUB, así que el paso `update-grub` y el reinicio no aplican ahí. En una instalación normal de Ubuntu ese último paso es el que activa el kernel nuevo.
+
+## 5. Lo que aprendí
 
 Lo que más me quedó es que el kernel no es "el sistema operativo" completo, sino la parte que controla CPU, memoria y dispositivos. Cambiar de un kernel monolítico a un micronúcleo es un problema de equilibrio entre **velocidad** y **robustez**. Compilar un kernel propio tiene sentido cuando se necesita quitar lo que sobra o agregar hardware específico. Para lo demás, alcanza con cargar un módulo.
