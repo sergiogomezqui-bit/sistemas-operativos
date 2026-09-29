@@ -88,6 +88,16 @@ init 6
 3. `make installkernel KERNCONF=CLASEKERN` copia el kernel compilado a `/boot/kernel`. FreeBSD conserva el anterior en `/boot/kernel.old`, así que hay respaldo si algo sale mal.
 4. `init 6` reinicia el sistema (cambia al runlevel 6). Es equivalente a `shutdown -r now`. Al arrancar se usa el kernel nuevo.
 
+**Cosa que descubrí al hacerlo de verdad:** en FreeBSD 15.1 el kernel que viene instalado es de paquetes (pkgbase), y `make installkernel` se niega a pisarlo y da error. La solución es instalar el kernel nuevo en otra ruta con `INSTKERNNAME`, y así el kernel GENERIC queda intacto como respaldo:
+
+```sh
+make installkernel KERNCONF=CLASEKERN INSTKERNNAME=CLASEKERN
+nextboot -k CLASEKERN
+init 6
+```
+
+`nextboot -k` le dice al cargador que arranque `CLASEKERN` solo en el siguiente reinicio. Si algo falla, el siguiente arranque vuelve solo al kernel GENERIC.
+
 ### 1.4 Verificación después de reiniciar
 
 ```sh
@@ -96,9 +106,9 @@ freebsd-version -k -r
 sysctl kern.conftxt | head
 ```
 
-`uname -a` debería mostrar `CLASEKERN` al final de la cadena del kernel, y `-k` y `-r` deberían coincidir.
+`uname -a` debería mostrar `CLASEKERN` al final de la cadena del kernel, y `sysctl kern.bootfile` debería apuntar a `/boot/CLASEKERN/kernel`.
 
-> **Si falla el arranque:** en el menú de arranque de FreeBSD se elige `kernel.old` para volver al kernel anterior. Por eso `installkernel` guarda esa copia.
+> **Si falla el arranque:** en el menú de arranque de FreeBSD se puede elegir otro kernel para volver al anterior (`kernel.old` en una instalación clásica, o `kernel` cuando se usó `INSTKERNNAME`).
 
 ---
 
@@ -267,6 +277,87 @@ Del resultado saco tres cosas:
 - El kernel nuevo (6.18.54) es un parche más nuevo del que estaba corriendo (6.18.33.2).
 - La imagen `bzImage` pesa 15 MB, y los componentes que no van dentro se compilaron como 960 módulos `.ko`, tal como explica la diapositiva 34.
 - WSL2 arranca el kernel desde Windows y no desde GRUB, así que el paso `update-grub` y el reinicio no aplican ahí. En una instalación normal de Ubuntu ese último paso es el que activa el kernel nuevo.
+
+### 4.2 FreeBSD 15.1: kernel personalizado CLASEKERN
+
+Usé la máquina virtual de FreeBSD 15.1-RELEASE (amd64) en VirtualBox, con 6 CPU y 4 GB de RAM. Ampliué el disco a 30 GB porque el original de 6 GB no alcanzaba para el código fuente y la compilación, y descargué las fuentes (`src.txz`, 241 MB) con `fetch` desde download.freebsd.org. Como el sistema es de 64 bits, la ruta de configuración es `amd64` y no `i386`.
+
+**Identificar el sistema:**
+
+```
+# cat /etc/os-release
+NAME=FreeBSD
+VERSION="15.1-RELEASE"
+VERSION_ID="15.1"
+ID=freebsd
+# freebsd-version -u -k -r
+15.1-RELEASE
+15.1-RELEASE
+15.1-RELEASE
+# getconf LONG_BIT
+64
+# uname -a
+FreeBSD freebsd 15.1-RELEASE FreeBSD 15.1-RELEASE releng/15.1-n283562-96841ea08dcf GENERIC amd64
+```
+
+**Configurar el kernel** (cambié la línea `ident` a `CLASEKERN` para poder reconocerlo después):
+
+```
+# cd /usr/src/sys/amd64/conf
+# mkdir /root/kernels
+# cp GENERIC /root/kernels/CLASEKERN
+# ln -s /root/kernels/CLASEKERN
+lrwxr-xr-x  1 root wheel 23 Sep 28 23:16 CLASEKERN -> /root/kernels/CLASEKERN
+# grep ident CLASEKERN
+ident		CLASEKERN
+```
+
+**Compilar** (`make -j6 buildkernel KERNCONF=CLASEKERN`, desde `/usr/src`):
+
+```
+>>> Kernel(s)  CLASEKERN built in 3924 seconds, ncpu: 6, make -j6
+     3933.05 real     17756.49 user      4551.05 sys
+```
+
+**Primer intento de instalar** (`make installkernel KERNCONF=CLASEKERN`), que falló:
+
+```
+ERROR: The kernel at /boot/kernel was installed from packages.
+       A packaged kernel should never be updated using installkernel;
+       this will cause the package database to become out of sync with
+       the live system state.  Either uninstall the packaged kernel,
+       or install this kernel to a different path using INSTKERNNAME.
+```
+
+**Instalación en otra ruta y arranque:**
+
+```
+# make installkernel KERNCONF=CLASEKERN INSTKERNNAME=CLASEKERN
+>>> Install kernel(s) CLASEKERN completed in 221 seconds, ncpu: 6
+# ls -lh /boot/CLASEKERN/kernel
+-r--r--r--  1 root wheel   28M Sep 29 00:21 /boot/CLASEKERN/kernel
+# nextboot -k CLASEKERN
+# init 6
+```
+
+**Después de reiniciar:**
+
+```
+# uname -a
+FreeBSD freebsd 15.1-RELEASE FreeBSD 15.1-RELEASE CLASEKERN amd64
+# uname -i
+CLASEKERN
+# sysctl kern.bootfile
+kern.bootfile: /boot/CLASEKERN/kernel
+# sysctl kern.ident
+kern.ident: CLASEKERN
+# kldstat | head -3
+Id Refs Address                Size Name
+ 1    5 0xffffffff80200000  22fb980 kernel
+ 2    1 0xffffffff82c18000     3220 intpm.ko
+```
+
+Con esto queda comprobado que el sistema arrancó con mi kernel `CLASEKERN`. Antes decía `GENERIC` al final de `uname -a` y ahora dice `CLASEKERN`. La compilación tardó más de una hora aun con 6 CPU, lo que confirma lo que decía la diapositiva 35 sobre que compilar un kernel lleva su tiempo.
 
 ## 5. Lo que aprendí
 
