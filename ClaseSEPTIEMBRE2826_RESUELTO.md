@@ -93,14 +93,7 @@ Piden presentar **un sistema operativo por cada tipo de kernel**. Mi elección, 
 | **Sistema con micronúcleo** | **MINIX 3** (también QNX) | El kernel solo hace lo mínimo: procesos, memoria básica y comunicación entre procesos (IPC). Drivers y sistema de archivos corren como procesos de usuario. Es más robusto, pero la comunicación por mensajes cuesta rendimiento. |
 | **Máquina virtual** | **IBM VM/370 (z/VM)** | Un monitor de máquina virtual crea copias virtuales del hardware completo. Cada usuario corre su propio SO sobre esa máquina virtual. |
 
-**Cómo lo voy a presentar (estructura):**
-
-1. Historia breve y para qué se usa el SO.
-2. Cómo está organizado su kernel, con un diagrama.
-3. Ventajas y desventajas de ese diseño.
-4. Comparación con los otros tipos (cuadro final).
-
-### Comparación rápida (para cerrar la presentación)
+### Comparación rápida
 
 | Diseño | Rendimiento | Robustez | Facilidad de extender |
 |---|---|---|---|
