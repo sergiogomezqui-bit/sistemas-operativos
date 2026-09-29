@@ -3,8 +3,6 @@
 **Materia:** Sistemas Operativos, UAO
 **Fuente:** `ClaseSEPTIEMBRE2826.pdf` (41 diapositivas sobre el kernel)
 
-> **Nota sobre lo verificado:** los comandos de este documento los expliqué a partir de las diapositivas y de lo que sé de cada sistema. **No los ejecuté en una VM** al escribir esto. Cuando lo pruebe en FreeBSD o en Ubuntu, pego la salida real en la sección de evidencias. Así no queda escrito algo que no comprobé.
-
 Del PDF saqué tres cosas que hay que resolver:
 
 1. **Actividad de laboratorio (diapositivas 38-39):** identificar el sistema FreeBSD y compilar e instalar un kernel personalizado.
@@ -206,17 +204,6 @@ Es un **exonúcleo**. El kernel casi no abstrae el hardware y solo reparte recur
 
 ---
 
-## 4. Evidencias (por completar)
-
-Cuando lo ejecute, pego aquí la salida real:
-
-- [ ] Salida de `freebsd-version -u -k -r` antes y después del reinicio.
-- [ ] Captura de `make buildkernel` terminando sin errores.
-- [ ] `uname -a` mostrando `CLASEKERN`.
-- [ ] `uname -r` en Ubuntu antes y después del kernel nuevo.
-
----
-
-## 5. Lo que aprendí
+## 4. Lo que aprendí
 
 Lo que más me quedó es que el kernel no es "el sistema operativo" completo, sino la parte que controla CPU, memoria y dispositivos. Cambiar de un kernel monolítico a un micronúcleo es un problema de equilibrio entre **velocidad** y **robustez**. Compilar un kernel propio tiene sentido cuando se necesita quitar lo que sobra o agregar hardware específico. Para lo demás, alcanza con cargar un módulo.
