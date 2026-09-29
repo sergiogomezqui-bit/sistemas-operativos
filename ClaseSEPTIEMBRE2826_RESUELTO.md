@@ -1,4 +1,4 @@
-# Clase Septiembre 28 de 2026 — Kernel (resuelto)
+# Clase Septiembre 28 de 2026 — Kernel
 
 **Materia:** Sistemas Operativos, UAO
 **Fuente:** `ClaseSEPTIEMBRE2826.pdf` (41 diapositivas sobre el kernel)
