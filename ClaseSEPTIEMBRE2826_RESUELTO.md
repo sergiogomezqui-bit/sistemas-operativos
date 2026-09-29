@@ -1,35 +1,4 @@
-# Clase Septiembre 28 de 2026 — Kernel (resuelto)
-
-**Materia:** Sistemas Operativos, UAO
-**Fuente:** `ClaseSEPTIEMBRE2826.pdf` (41 diapositivas sobre el kernel)
-
-Del PDF saqué tres cosas que hay que resolver:
-
-1. **Actividad de laboratorio (diapositivas 38-39):** identificar el sistema FreeBSD y compilar e instalar un kernel personalizado.
-2. **Trabajo investigativo (diapositiva 40), entrega el 5 de octubre:** presentar un sistema operativo por cada tipo de kernel.
-3. **Versión 6 (diapositiva 40), entrega el 19 de octubre:** instalar un kernel nuevo en Oracle Linux, Ubuntu o CentOS, y clasificar el kernel de varios SO.
-
-Antes de resolver, dejo un resumen de la teoría de la clase. Me sirvió para entender las respuestas y no solo copiarlas.
-
----
-
-## 0. Resumen de la teoría (para tener contexto)
-
-- **Kernel:** es el núcleo del SO. Administra el hardware, sobre todo la **CPU, la memoria y los dispositivos de E/S**. Además da protección (niveles de acceso) y acceso compartido (multiplexado) a los recursos.
-- **Modo kernel y modo usuario:** la CPU tiene niveles de privilegio (*rings*). Las aplicaciones corren en espacio de usuario y le piden cosas al kernel con **llamadas al sistema (syscalls)**.
-- **Kernel panic:** error grave que el kernel detecta y no puede resolver, por ejemplo una referencia a una dirección de memoria inválida. Puede venir de un bug o de una falla de hardware como la RAM.
-- **Versiones del kernel Linux (XX.YY.ZZ):**
-  - XX es la serie principal.
-  - YY par significa producción (estable) e impar significa desarrollo.
-  - ZZ es la revisión que corrige bugs.
-  - Ejemplo: `2.4.0` es serie 2, producción 4 (par), primera versión. `2.5.0` es la versión 0 del kernel de desarrollo 2.5.
-- **Módulos:** en Linux son los `.ko` que están en `/lib/modules`. Se manejan con `lsmod`, `modprobe`, `modinfo` y `depmod`. En FreeBSD están en `/boot/kernel` y se cargan con `kldload`.
-- **Por qué compilar un kernel propio (FreeBSD):**
-  - Arranca más rápido.
-  - Usa menos memoria.
-  - Permite soportar hardware que GENERIC no incluye.
-
----
+# Clase Septiembre 28 de 2026 — Kernel
 
 ## 1. Actividad de laboratorio: FreeBSD
 
@@ -124,14 +93,7 @@ Piden presentar **un sistema operativo por cada tipo de kernel**. Mi elección, 
 | **Sistema con micronúcleo** | **MINIX 3** (también QNX) | El kernel solo hace lo mínimo: procesos, memoria básica y comunicación entre procesos (IPC). Drivers y sistema de archivos corren como procesos de usuario. Es más robusto, pero la comunicación por mensajes cuesta rendimiento. |
 | **Máquina virtual** | **IBM VM/370 (z/VM)** | Un monitor de máquina virtual crea copias virtuales del hardware completo. Cada usuario corre su propio SO sobre esa máquina virtual. |
 
-**Cómo lo voy a presentar (estructura):**
-
-1. Historia breve y para qué se usa el SO.
-2. Cómo está organizado su kernel, con un diagrama.
-3. Ventajas y desventajas de ese diseño.
-4. Comparación con los otros tipos (cuadro final).
-
-### Comparación rápida (para cerrar la presentación)
+### Comparación rápida
 
 | Diseño | Rendimiento | Robustez | Facilidad de extender |
 |---|---|---|---|
@@ -216,9 +178,11 @@ Es un **exonúcleo**. El kernel casi no abstrae el hardware y solo reparte recur
 
 ## 4. Evidencias reales
 
+**Entorno de trabajo:** todas las pruebas las hice en mi computador con **Windows 11**. Para la parte de Linux usé **Ubuntu 26.04 LTS sobre WSL2**, y para la parte de FreeBSD usé una **máquina virtual de FreeBSD 15.1 en VirtualBox**. Las imágenes de esta sección son capturas de las salidas reales de la terminal de esos dos entornos. Mac OS X aparece en este documento solo como ejemplo teórico de kernel híbrido (sección 3) y no participó en ninguna prueba.
+
 ### 4.1 Ubuntu 26.04 (WSL2): compilación del kernel 6.18.54
 
-Lo hice en mi Ubuntu 26.04 LTS sobre WSL2, con 12 núcleos y 8 GB de RAM. Descargué el código fuente de kernel.org, partí de la configuración del kernel que estaba en uso (`/proc/config.gz`, el equivalente a copiar `/boot/config-$(uname -r)`) y compilé la imagen y los módulos.
+Lo hice en Ubuntu 26.04 LTS ejecutándose sobre WSL2 dentro de mi Windows 11, con 12 núcleos y 8 GB de RAM disponibles. Descargué el código fuente de kernel.org, partí de la configuración del kernel que estaba en uso (`/proc/config.gz`, el equivalente a copiar `/boot/config-$(uname -r)`) y compilé la imagen y los módulos.
 
 **Kernel antes de empezar y descarga del código fuente:**
 
@@ -280,7 +244,7 @@ Del resultado saco tres cosas:
 
 ### 4.2 FreeBSD 15.1: kernel personalizado CLASEKERN
 
-Usé la máquina virtual de FreeBSD 15.1-RELEASE (amd64) en VirtualBox, con 6 CPU y 4 GB de RAM. Ampliué el disco a 30 GB porque el original de 6 GB no alcanzaba para el código fuente y la compilación, y descargué las fuentes (`src.txz`, 241 MB) con `fetch` desde download.freebsd.org. Como el sistema es de 64 bits, la ruta de configuración es `amd64` y no `i386`.
+Usé la máquina virtual de FreeBSD 15.1-RELEASE (amd64) que corre en VirtualBox sobre mi Windows 11, con 6 CPU y 4 GB de RAM, y trabajé con ella por SSH desde Windows. Ampliué el disco a 30 GB porque el original de 6 GB no alcanzaba para el código fuente y la compilación, y descargué las fuentes (`src.txz`, 241 MB) con `fetch` desde download.freebsd.org. Como el sistema es de 64 bits, la ruta de configuración es `amd64` y no `i386`.
 
 **Identificar el sistema:**
 
@@ -358,7 +322,3 @@ Id Refs Address                Size Name
 ```
 
 Con esto queda comprobado que el sistema arrancó con mi kernel `CLASEKERN`. Antes decía `GENERIC` al final de `uname -a` y ahora dice `CLASEKERN`. La compilación tardó más de una hora aun con 6 CPU, lo que confirma lo que decía la diapositiva 35 sobre que compilar un kernel lleva su tiempo.
-
-## 5. Lo que aprendí
-
-Lo que más me quedó es que el kernel no es "el sistema operativo" completo, sino la parte que controla CPU, memoria y dispositivos. Cambiar de un kernel monolítico a un micronúcleo es un problema de equilibrio entre **velocidad** y **robustez**. Compilar un kernel propio tiene sentido cuando se necesita quitar lo que sobra o agregar hardware específico. Para lo demás, alcanza con cargar un módulo.
