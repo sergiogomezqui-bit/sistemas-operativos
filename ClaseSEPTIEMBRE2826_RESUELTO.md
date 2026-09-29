@@ -1,36 +1,5 @@
 # Clase Septiembre 28 de 2026 — Kernel
 
-**Materia:** Sistemas Operativos, UAO
-**Fuente:** `ClaseSEPTIEMBRE2826.pdf` (41 diapositivas sobre el kernel)
-
-Del PDF saqué tres cosas que hay que resolver:
-
-1. **Actividad de laboratorio (diapositivas 38-39):** identificar el sistema FreeBSD y compilar e instalar un kernel personalizado.
-2. **Trabajo investigativo (diapositiva 40), entrega el 5 de octubre:** presentar un sistema operativo por cada tipo de kernel.
-3. **Versión 6 (diapositiva 40), entrega el 19 de octubre:** instalar un kernel nuevo en Oracle Linux, Ubuntu o CentOS, y clasificar el kernel de varios SO.
-
-Antes de resolver, dejo un resumen de la teoría de la clase. Me sirvió para entender las respuestas y no solo copiarlas.
-
----
-
-## 0. Resumen de la teoría (para tener contexto)
-
-- **Kernel:** es el núcleo del SO. Administra el hardware, sobre todo la **CPU, la memoria y los dispositivos de E/S**. Además da protección (niveles de acceso) y acceso compartido (multiplexado) a los recursos.
-- **Modo kernel y modo usuario:** la CPU tiene niveles de privilegio (*rings*). Las aplicaciones corren en espacio de usuario y le piden cosas al kernel con **llamadas al sistema (syscalls)**.
-- **Kernel panic:** error grave que el kernel detecta y no puede resolver, por ejemplo una referencia a una dirección de memoria inválida. Puede venir de un bug o de una falla de hardware como la RAM.
-- **Versiones del kernel Linux (XX.YY.ZZ):**
-  - XX es la serie principal.
-  - YY par significa producción (estable) e impar significa desarrollo.
-  - ZZ es la revisión que corrige bugs.
-  - Ejemplo: `2.4.0` es serie 2, producción 4 (par), primera versión. `2.5.0` es la versión 0 del kernel de desarrollo 2.5.
-- **Módulos:** en Linux son los `.ko` que están en `/lib/modules`. Se manejan con `lsmod`, `modprobe`, `modinfo` y `depmod`. En FreeBSD están en `/boot/kernel` y se cargan con `kldload`.
-- **Por qué compilar un kernel propio (FreeBSD):**
-  - Arranca más rápido.
-  - Usa menos memoria.
-  - Permite soportar hardware que GENERIC no incluye.
-
----
-
 ## 1. Actividad de laboratorio: FreeBSD
 
 ### 1.1 Identificar el sistema (diapositiva 38)
@@ -360,7 +329,3 @@ Id Refs Address                Size Name
 ```
 
 Con esto queda comprobado que el sistema arrancó con mi kernel `CLASEKERN`. Antes decía `GENERIC` al final de `uname -a` y ahora dice `CLASEKERN`. La compilación tardó más de una hora aun con 6 CPU, lo que confirma lo que decía la diapositiva 35 sobre que compilar un kernel lleva su tiempo.
-
-## 5. Lo que aprendí
-
-Lo que más me quedó es que el kernel no es "el sistema operativo" completo, sino la parte que controla CPU, memoria y dispositivos. Cambiar de un kernel monolítico a un micronúcleo es un problema de equilibrio entre **velocidad** y **robustez**. Compilar un kernel propio tiene sentido cuando se necesita quitar lo que sobra o agregar hardware específico. Para lo demás, alcanza con cargar un módulo.
